@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "python",
+            "name": "Work: CheckUsage.py",
+            "request": "launch",
+            "program": "${workspaceFolder}/check_water.py",
+            "console": "integratedTerminal",
+            "pythonPath" : "E:\\Temp\\water\\Scripts\\python.exe"
+
+        },
+        {
+            "type": "python",
+            "name": "Home: CheckUsage.py",
+            "request": "launch",
+            "program": "${workspaceFolder}/check_water.py",
+            "console": "integratedTerminal",
+            "pythonPath" : "G:\\Temp\\water\\Scripts\\python.exe"
+        }
+    ]
+}

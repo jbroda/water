@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index - My ASP.NET Application</title>
+    <link href="/WaterUsage/Content/css?v=eTw2k70mry6cNx58ugwpu0NdeEcobHv7ppffjcMWdsc1" rel="stylesheet"/>
+
+    <script src="/WaterUsage/bundles/modernizr?v=wBEWDufH_8Md-Pbioxomt90vm6tJN2Pyy9u9zHtWsPo1"></script>
+
+   
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+               <p class="navbar-brand">Village of Schaumburg Water Account Readings </p>
+            </div>
+            </div>
+            <div class="navbar-collapse collapse">
+
+            </div>
+        </div>
+
+    <div class="container body-content">
+        
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+<h2>Index</h2>
+<div class="se-pre-con"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div><h4>Account:</h4></div>
+            <div id="Account">202379-52509 </div>
+        </div>
+        <div class="col-md-6">
+            <div><h4>Meter:</h4></div>
+            <div id="Meter">30322081       </div>
+        </div>
+    </div>
+    <hr />
+    <div><h4>Readings</h4></div>
+    <div class="row">
+        <div class="col-md-6">
+            <div id="table_high_div"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="table_low_div"></div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+
+            <div id="chart_div"></div>
+        </div>
+    </div>
+
+
+
+</div>
+<script type="text/javascript">
+    google.charts.load('current', { packages: ['corechart', 'bar'] });
+    google.charts.load('current', { 'packages': ['table'] });
+
+
+    google.charts.setOnLoadCallback(drawTableChart);
+ //   google.charts.setOnLoadCallback(drawTable);
+    function drawTableChart() {
+        var myurl = '30322081       ';
+        //console.log(myurl)
+        $.ajax({
+            type: "POST",
+            url: "./AjaxMethod?MeterID=".concat(myurl),
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (r) {
+
+             //   var acct_data = r["acctData"];
+                var data = google.visualization.arrayToDataTable(r["chartData"]);
+                var tab_high = google.visualization.arrayToDataTable(r["tableDataHigh"]);
+                var tab_low = google.visualization.arrayToDataTable(r["tableDataLow"]);
+
+                //Columns
+                var options = {
+                    title: 'Water Consmption History',
+                    'legend': 'top',
+                    hAxis: {
+                        title: 'Month'
+                        //,
+                        //format: 'h:mm a',
+                        //viewWindow: {
+                        //    min: 1,
+                        //    max: 10
+                        //}
+                    },
+                    vAxis: {
+                        title: 'Consumption (1K Gal)'
+                    }
+                };
+                var chart = new google.visualization.ColumnChart($('#chart_div')[0]);
+                chart.draw(data, options);
+
+                var table_high = new google.visualization.Table(document.getElementById('table_high_div'));
+                table_high.draw(tab_high, { showRowNumber: true, page: 'enable', width: '100%', height: '100%' });
+              //  var dataTable = tab_low;
+                if (tab_low.getNumberOfRows() > 1) {
+                    var table_low = new google.visualization.Table(document.getElementById('table_low_div'));
+                    table_low.draw(tab_low, { showRowNumber: true, page: 'enable', width: '100%', height: '100%' });
+                }
+                //set Account Values
+               // document.getElementById('Account').innerText = acct_data[0].Account;
+               // document.getElementById('Meter').innerText = acct_data[1].Meter;
+                 $(".se-pre-con").fadeOut("slow");
+            },
+            failure: function (r) {
+                console.log("Failure");
+            },
+            error: function (r) {
+              console.log("Error");
+            }
+        });
+    }
+
+    //function drawChart() {
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/AccountReadings/AjaxMethod",
+    //        data: '{}',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        success: function (r) {
+    //            alert(r);
+    //            var data = google.visualization.arrayToDataTable(r["chartData"]);
+    //           // var tab = google.visualization.arrayToDataTable(r["tableData"]);
+    //           // alert(data.toJSON());
+    //            //Columns
+    //            var options = {
+    //                title: 'Water Consmption History',
+    //                hAxis: {
+    //                    title: 'Month'
+    //                    //,
+    //                    //format: 'h:mm a',
+    //                    //viewWindow: {
+    //                    //    min: 1,
+    //                    //    max: 10
+    //                    //}
+    //                },
+    //                vAxis: {
+    //                    title: 'Consumption (1K Gal)'
+    //                }
+    //            };
+    //            var chart = new google.visualization.ColumnChart($('#chart_div')[0]);
+    //            //alert("c");
+    //            chart.draw(data, options);
+    //        },
+    //        failure: function (r) {
+    //            (r.d);
+    //        },
+    //        error: function (r) {
+    //            alert(r.d);
+    //        }
+    //    });
+    //}
+
+    //function drawTable() {
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/AccountReadings/AjaxMethod",
+    //        data: '{}',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        success: function (r) {
+    //            alert(r);
+    //            var data = google.visualization.arrayToDataTable(r["tableData"]);
+    //            // var tab = google.visualization.arrayToDataTable(r["tableData"]);
+    //            // alert(data.toJSON());
+    //            //Columns
+    //            var options = {
+    //                title: 'Water Consmption History',
+    //                hAxis: {
+    //                    title: 'Month'
+    //                    //,
+    //                    //format: 'h:mm a',
+    //                    //viewWindow: {
+    //                    //    min: 1,
+    //                    //    max: 10
+    //                    //}
+    //                },
+    //                vAxis: {
+    //                    title: 'Consumption (1K Gal)'
+    //                }
+    //            };
+    //           // var chart = new google.visualization.ColumnChart($('#chart_div')[0]);
+
+    //            var table = new google.visualization.Table(document.getElementById('table_div'));
+
+    //            table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+
+
+    //        },
+    //        failure: function (r) {
+    //            (r.d);
+    //        },
+    //        error: function (r) {
+    //            alert(r.d);
+    //        }
+    //    });
+    //}
+
+    //function drawTable1() {
+    //    var data = new google.visualization.DataTable();
+    //    data.addColumn('string', 'Name');
+    //    data.addColumn('number', 'Salary');
+    //    data.addColumn('boolean', 'Full Time Employee');
+    //    data.addRows([
+    //        ['Mike', { v: 10000, f: '$10,000' }, true],
+    //        ['Jim', { v: 8000, f: '$8,000' }, false],
+    //        ['Alice', { v: 12500, f: '$12,500' }, true],
+    //        ['Bob', { v: 7000, f: '$7,000' }, true]
+    //    ]);
+
+    //    var table = new google.visualization.Table(document.getElementById('table_div'));
+
+    //    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+    //}
+
+
+    //function drawBasic1() {
+
+    //    var data = new google.visualization.DataTable();
+    //    data.addColumn('timeofday', 'Time of Day');
+    //    data.addColumn('number', 'Motivation Level');
+
+    //    data.addRows([
+    //        [{ v: [8, 0, 0], f: '8 am' }, 1],
+    //        [{ v: [9, 0, 0], f: '9 am' }, 2],
+    //        [{ v: [10, 0, 0], f: '10 am' }, 3],
+    //        [{ v: [11, 0, 0], f: '11 am' }, 4],
+    //        [{ v: [12, 0, 0], f: '12 pm' }, 5],
+    //        [{ v: [13, 0, 0], f: '1 pm' }, 6],
+    //        [{ v: [14, 0, 0], f: '2 pm' }, 7],
+    //        [{ v: [15, 0, 0], f: '3 pm' }, 8],
+    //        [{ v: [16, 0, 0], f: '4 pm' }, 9],
+    //        [{ v: [17, 0, 0], f: '5 pm' }, 10],
+    //    ]);
+
+    //    var options = {
+    //        title: 'Motivation Level Throughout the Day',
+    //        hAxis: {
+    //            title: 'Time of Day',
+    //            format: 'h:mm a',
+    //            viewWindow: {
+    //                min: [7, 30, 0],
+    //                max: [17, 30, 0]
+    //            }
+    //        },
+    //        vAxis: {
+    //            title: 'Rating (scale of 1-10)'
+    //        }
+    //    };
+
+    //    var chart = new google.visualization.ColumnChart(
+    //        document.getElementById('chart_div'));
+
+    //    chart.draw(data, options);
+    //}
+
+
+</script>
+        <hr />
+        <footer>
+            <p style="clear:both;display:block;text-align:center;">
+                &copy;101 Schaumburg Court
+                Schaumburg, IL 60193-1899 <br />
+                Village Main Number (847) 895-4500 <br />
+                Village Fax Number (847) 895-7806
+            </p>
+        </footer>
+    </div>
+
+    <script src="/WaterUsage/bundles/jquery?v=FVs3ACwOLIVInrAl5sdzR2jrCDmVOWFbZMY6g6Q0ulE1"></script>
+
+    <script src="/WaterUsage/bundles/bootstrap?v=2Fz3B0iizV2NnnamQFrx-NbYJNTFeBJ2GM05SilbtQU1"></script>
+
+ 
+    
+</body>
+</html>
